@@ -2,16 +2,13 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>[ BLACKTHINGS ] - SECURE ACCESS</title>
+    <title>[ BLACKTHINGS ] - CRYPTED ACCESS</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        #login-screen { text-align: center; border: 1px dashed #0f0; padding: 40px; box-shadow: 0 0 20px rgba(0,255,0,0.2); }
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #login-screen { text-align: center; border: 1px solid #0f0; padding: 50px; background: rgba(0, 20, 0, 0.9); box-shadow: 0 0 30px #0f0; }
         #terminal { display: none; flex-direction: column; width: 100%; height: 100vh; padding: 20px; box-sizing: border-box; }
-        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; text-shadow: 0 0 5px #0f0; margin-bottom: 20px; }
-        #input-line { display: flex; border-top: 1px solid #040; padding-top: 10px; }
-        input { background: transparent; border: none; color: #0f0; font-family: inherit; font-size: inherit; outline: none; flex-grow: 1; text-align: center; }
-        #cmd-input { text-align: left; }
-        .error { color: #f00; margin-top: 10px; font-size: 0.8em; }
+        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; margin-bottom: 20px; }
+        input { background: transparent; border: none; border-bottom: 1px solid #0f0; color: #0f0; font-family: inherit; font-size: 1.2em; outline: none; text-align: center; margin-top: 20px; width: 100%; }
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
     </style>
@@ -19,62 +16,46 @@
 <body>
 
     <div id="login-screen">
-        <h2 class="blink">RESTRICTED AREA</h2>
-        <p>IDENTIFICATION REQUIRED</p>
-        <input type="password" id="passphrase" placeholder="ENTER PASSPHRASE" autofocus>
-        <div id="login-msg" class="error"></div>
+        <h2 class="blink">ENCRYPTED GATEWAY</h2>
+        <p>IDENTIFICATION TOKEN REQUIRED</p>
+        <input type="password" id="passphrase" autofocus>
+        <div id="error-msg" style="color:red; margin-top:15px;"></div>
     </div>
 
     <div id="terminal">
-        <div id="output">[ ACCESS GRANTED ]
-[ WELCOME SIR ]
-Type 'help' for commands...</div>
-        <div id="input-line">
+        <div id="output"></div>
+        <div style="display:flex; border-top: 1px solid #040; padding-top:10px;">
             <span style="margin-right:10px;">BT-SYS_></span>
-            <input type="text" id="cmd-input">
+            <input type="text" id="cmd-input" style="text-align:left; border:none; margin:0; font-size:1em;">
         </div>
     </div>
 
     <script>
-        const passInput = document.getElementById('passphrase');
-        const loginScreen = document.getElementById('login-screen');
-        const terminal = document.getElementById('terminal');
-        const loginMsg = document.getElementById('login-msg');
-        
-        // TA PASSPHRASE ICI
-        const SECRET = "STARK2026"; 
+        // Fonction de hachage SHA-256
+        async function hash(string) {
+            const utf8 = new TextEncoder().encode(string);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-        passInput.addEventListener('keydown', (e) => {
+        const TARGET_HASH = "2ed277f3747f48503875323910543e26001d2957b4f53518a24d556885827e8d";
+
+        const passInput = document.getElementById('passphrase');
+        
+        passInput.addEventListener('keydown', async (e) => {
             if (e.key === 'Enter') {
-                if (passInput.value === SECRET) {
-                    loginScreen.style.display = 'none';
-                    terminal.style.display = 'flex';
+                const userHash = await hash(passInput.value);
+                
+                if (userHash === TARGET_HASH) {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('terminal').style.display = 'flex';
+                    document.getElementById('output').textContent = "[ ACCESS GRANTED ]\n[ SYSTEM DECRYPTED ]\n[ WELCOME SIR ]";
                     document.getElementById('cmd-input').focus();
                 } else {
-                    loginMsg.textContent = "INVALID PASSPHRASE - ACCESS DENIED";
+                    document.getElementById('error-msg').textContent = "HASH MISMATCH - ACCESS DENIED";
                     passInput.value = '';
                 }
-            }
-        });
-
-        // Gestion des commandes du terminal
-        const cmdInput = document.getElementById('cmd-input');
-        const output = document.getElementById('output');
-        cmdInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const val = cmdInput.value.toLowerCase();
-                const div = document.createElement('div');
-                div.textContent = "> " + val;
-                output.appendChild(div);
-                
-                if(val === "help") {
-                    const res = document.createElement('div');
-                    res.style.color = "#888";
-                    res.textContent = "Commands: status, armor, clear";
-                    output.appendChild(res);
-                }
-                cmdInput.value = "";
-                output.scrollTop = output.scrollHeight;
             }
         });
     </script>
