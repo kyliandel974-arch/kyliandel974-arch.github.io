@@ -2,58 +2,78 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>[ BLACKTHINGS ] - TERMINAL</title>
+    <title>[ BLACKTHINGS ] - SECURE ACCESS</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; flex-direction: column; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; margin-bottom: 20px; text-shadow: 0 0 5px #0f0; }
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        #login-screen { text-align: center; border: 1px dashed #0f0; padding: 40px; box-shadow: 0 0 20px rgba(0,255,0,0.2); }
+        #terminal { display: none; flex-direction: column; width: 100%; height: 100vh; padding: 20px; box-sizing: border-box; }
+        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; text-shadow: 0 0 5px #0f0; margin-bottom: 20px; }
         #input-line { display: flex; border-top: 1px solid #040; padding-top: 10px; }
-        #prompt { color: #0f0; margin-right: 10px; }
-        input { background: transparent; border: none; color: #0f0; font-family: inherit; font-size: inherit; outline: none; flex-grow: 1; }
-        .cmd-out { color: #888; margin-bottom: 10px; }
+        input { background: transparent; border: none; color: #0f0; font-family: inherit; font-size: inherit; outline: none; flex-grow: 1; text-align: center; }
+        #cmd-input { text-align: left; }
+        .error { color: #f00; margin-top: 10px; font-size: 0.8em; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
-    <div id="output">[ SYSTEM READY ]
-Type 'help' to see available commands.</div>
-    <div id="input-line">
-        <span id="prompt">BT-SYS_></span>
-        <input type="text" id="cmd-input" autofocus>
+
+    <div id="login-screen">
+        <h2 class="blink">RESTRICTED AREA</h2>
+        <p>IDENTIFICATION REQUIRED</p>
+        <input type="password" id="passphrase" placeholder="ENTER PASSPHRASE" autofocus>
+        <div id="login-msg" class="error"></div>
+    </div>
+
+    <div id="terminal">
+        <div id="output">[ ACCESS GRANTED ]
+[ WELCOME SIR ]
+Type 'help' for commands...</div>
+        <div id="input-line">
+            <span style="margin-right:10px;">BT-SYS_></span>
+            <input type="text" id="cmd-input">
+        </div>
     </div>
 
     <script>
-        const input = document.getElementById('cmd-input');
-        const output = document.getElementById('output');
+        const passInput = document.getElementById('passphrase');
+        const loginScreen = document.getElementById('login-screen');
+        const terminal = document.getElementById('terminal');
+        const loginMsg = document.getElementById('login-msg');
+        
+        // TA PASSPHRASE ICI
+        const SECRET = "STARK2026"; 
 
-        const commands = {
-            'help': "Available: status, armor-log, recruit, clear",
-            'status': "ONLINE - All systems green. Initializing Blackthings network.",
-            'armor-log': "PROTO-01: Energy core analysis required. Structure: Titanium/Gold alloy (Planned).",
-            'recruit': "Searching for candidates... Executor-class profile needed.",
-            'clear': ""
-        };
-
-        input.addEventListener('keydown', (e) => {
+        passInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const cmd = input.value.toLowerCase().trim();
-                const newLine = document.createElement('div');
-                newLine.innerHTML = `<span style="color:#fff">> ${cmd}</span>`;
-                output.appendChild(newLine);
-
-                if (cmd === 'clear') {
-                    output.innerHTML = "[ SYSTEM CLEARED ]";
-                } else if (commands[cmd]) {
-                    const response = document.createElement('div');
-                    response.className = 'cmd-out';
-                    response.textContent = commands[cmd];
-                    output.appendChild(response);
+                if (passInput.value === SECRET) {
+                    loginScreen.style.display = 'none';
+                    terminal.style.display = 'flex';
+                    document.getElementById('cmd-input').focus();
                 } else {
-                    const error = document.createElement('div');
-                    error.style.color = 'red';
-                    error.textContent = "Unknown command.";
-                    output.appendChild(error);
+                    loginMsg.textContent = "INVALID PASSPHRASE - ACCESS DENIED";
+                    passInput.value = '';
                 }
+            }
+        });
+
+        // Gestion des commandes du terminal
+        const cmdInput = document.getElementById('cmd-input');
+        const output = document.getElementById('output');
+        cmdInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const val = cmdInput.value.toLowerCase();
+                const div = document.createElement('div');
+                div.textContent = "> " + val;
+                output.appendChild(div);
                 
-                input.value = '';
+                if(val === "help") {
+                    const res = document.createElement('div');
+                    res.style.color = "#888";
+                    res.textContent = "Commands: status, armor, clear";
+                    output.appendChild(res);
+                }
+                cmdInput.value = "";
                 output.scrollTop = output.scrollHeight;
             }
         });
