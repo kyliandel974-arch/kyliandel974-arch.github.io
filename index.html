@@ -25,7 +25,7 @@
     <div id="terminal">
         <div id="output"></div>
         <div style="display:flex; border-top: 1px solid #040; padding-top:10px;">
-            <span style="margin-right:10px;">BT-SYS_></span>
+            <span style="margin-right:10px;">CMD_SyS ></span>
             <input type="text" id="cmd-input" style="text-align:left; border:none; margin:0; font-size:1em;">
         </div>
     </div>
@@ -58,6 +58,62 @@
                     document.getElementById('error-msg').textContent = "HASH MISMATCH";
                     passInput.value = '';
                 }
+            }
+        });
+        const cmdInput = document.getElementById('cmd-input');
+        const output = document.getElementById('output');
+
+        const catalog = `
+[ CATALOGUE SERVICES & OBJETS ]
+--------------------------------------------------
+ID   | DESIGNATION            | PRIX (BTC/CASH)
+--------------------------------------------------
+#01  | Module Exosquelette V1 | 2.5 BTC / 75k€
+#02  | Script Intrusion brute | 0.4 BTC / 12k€
+#03  | Analyse Infra-Rouge    | 0.1 BTC / 3k€
+#04  | Serveur Proxy Fantôme  | 0.05 BTC/mois
+--------------------------------------------------
+NOTE : AUCUN VIREMENT. CRYPTO OU LIQUIDE UNIQUEMENT.
+`;
+
+        cmdInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const val = cmdInput.value.toLowerCase().trim();
+                const line = document.createElement('div');
+                line.innerHTML = `<span style="color:#fff">> ${val}</span>`;
+                output.appendChild(line);
+                
+                const response = document.createElement('div');
+                response.style.marginBottom = "10px";
+
+                switch(val) {
+                    case 'help':
+                        response.innerHTML = "Commandes : <span style='color:#fff'>services, order, network, status, clear</span>";
+                        break;
+                    case 'services':
+                        response.innerText = catalog;
+                        break;
+                    case 'order':
+                        response.innerHTML = "<span style='color:yellow'>[!] REDIRECTING TO SECURE FORM...</span><br>Veuillez remplir vos coordonnées PGP sur la page de commande externe.";
+                        // Ici on pourrait mettre un lien réel : window.open('https://ton-formulaire.com');
+                        break;
+                    case 'network':
+                        response.innerHTML = "SCANNING...<br>[OK] Proxy Node 1<br>[OK] Proxy Node 2<br><span style='color:red'>[!] Warning: Latency on Satellite-Link</span>";
+                        break;
+                    case 'status':
+                        response.innerText = "SYSTEM: STABLE\nPOWER: 84%\nARMOR INTEGRITY: 100%";
+                        break;
+                    case 'clear':
+                        output.innerHTML = "[ SYSTEM RELOADED ]";
+                        break;
+                    default:
+                        response.style.color = "red";
+                        response.innerText = "Unknown command.";
+                }
+                
+                output.appendChild(response);
+                cmdInput.value = "";
+                output.scrollTop = output.scrollHeight;
             }
         });
     </script>
