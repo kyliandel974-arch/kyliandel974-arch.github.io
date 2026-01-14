@@ -99,7 +99,7 @@
                         response.innerHTML = `
                         <table>
                             <thead>
-                                <tr><th>ID</th><th>DESIGNATION</th><th>BTC</th><th>CASH</th></tr>
+                                <tr><th>ID</th><th>DESIGNATION</th><th>EURC</th><th>CASH</th></tr>
                             </thead>
                             <tbody>
                                 <tr><td>01</td><td>Module Exosquelette V1</td><td><span class="crypto-tag">₿</span> 2.5</td><td>75k €</td></tr>
@@ -111,12 +111,22 @@
                         <p style="color:yellow; font-size:0.8em;">Usage: buy 01</p>`;
                         break;
 
-                    case 'buy':
+                   case 'buy':
                         if (products[target]) {
-                            response.innerHTML = `<span style="color:cyan">[!] TRANSACTION INITIALISÉE : ${products[target].name}</span><br>Redirection tunnel sécurisé...`;
-                            setTimeout(() => { window.open(`https://tally.so/r/YOUR_ID?item=${target}`, '_blank'); }, 1500);
+                            response.innerHTML = `
+                            <div style="border: 1px solid #0f0; padding: 10px;">
+                                <p style="color:cyan;">[!] COMMANDE : ${products[target].name}</p>
+                                <p>1. Ouvrez votre wallet (Exodus ou autre)</p>
+                                <p>2. Envoyez <span style="color:yellow;">${products[target].price}</span></p>
+                                <p>3. Réseau : <span style="color:yellow;">POLYGON (MATIC)</span></p>
+                                <p>4. Cliquez ci-dessous pour confirmer l'envoi :</p>
+                                <button onclick="window.open('https://tally.so/r/YOUR_ID?item=${target}', '_blank')" 
+                                        style="background:#040; color:#0f0; border:1px solid #0f0; cursor:pointer; padding:5px;">
+                                    CONFIRMER PAIEMENT
+                                </button>
+                            </div>`;
                         } else {
-                            response.innerHTML = "<span style='color:red'>ID INVALIDE. Tapez 'services'.</span>";
+                            response.innerHTML = "<span style='color:red'>ID INVALIDE.</span>";
                         }
                         break;
 
