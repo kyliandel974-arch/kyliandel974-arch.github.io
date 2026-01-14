@@ -33,11 +33,11 @@
     <script>
         // Fonction de hachage SHA-256
         async function hash(string) {
-            const utf8 = new TextEncoder().encode(string);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+    const utf8 = new TextEncoder().encode(string.toLowerCase().trim()); // Nettoyage auto
+    const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
         const TARGET_HASH = "2ed277f3747f48503875323910543e26001d2957b4f53518a24d556885827e8d";
 
