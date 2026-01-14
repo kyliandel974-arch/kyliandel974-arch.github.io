@@ -4,24 +4,22 @@
     <meta charset="UTF-8">
     <title>[ BLACKTHINGS ] - SECURE</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        #login-screen { text-align: center; border: 1px solid #0f0; padding: 50px; background: rgba(0, 20, 0, 0.9); box-shadow: 0 0 30px #0f0; }
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        #login-screen { text-align: center; border: 1px solid #0f0; padding: 50px; background: rgba(0, 20, 0, 0.9); box-shadow: 0 0 30px #0f0; z-index: 10; }
         #terminal { display: none; flex-direction: column; width: 100%; height: 100vh; padding: 20px; box-sizing: border-box; }
-        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; margin-bottom: 20px; }
+        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; margin-bottom: 20px; scrollbar-width: thin; scrollbar-color: #040 #000; }
         input { background: transparent; border: none; border-bottom: 1px solid #0f0; color: #0f0; font-family: inherit; font-size: 1.2em; outline: none; text-align: center; margin-top: 20px; width: 100%; }
+        #cmd-input { text-align: left; border: none; margin: 0; font-size: 1em; }
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 1px solid #040; }
-        th { background: #020; color: #fff; text-align: left; padding: 10px; border-bottom: 2px solid #0f0; }
-        td { padding: 8px; border-bottom: 1px solid #020; color: #0f0; }
-        tr:hover { background: rgba(0, 255, 0, 0.1); }
-        .crypto-tag { color: #f2a900; font-weight: bold; font-size: 0.8em; }
-        table { width: 100%; border-collapse: collapse; margin: 10px 0; border: 1px solid #040; background: rgba(0,20,0,0.5); }
-        th { background: #040; color: #fff; text-align: left; padding: 12px; border-bottom: 2px solid #0f0; font-size: 0.9em; }
-        td { padding: 10px; border-bottom: 1px solid #020; color: #0f0; font-size: 0.85em; }
+        
+        /* Style Tableaux */
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; border: 1px solid #040; background: rgba(0,255,0,0.05); }
+        th { background: #040; color: #fff; text-align: left; padding: 12px; border-bottom: 2px solid #0f0; }
+        td { padding: 10px; border-bottom: 1px solid #020; color: #0f0; }
         tr:hover { background: rgba(0, 255, 0, 0.1); }
         .crypto-tag { color: #f2a900; font-weight: bold; }
-</style>
+    </style>
 </head>
 <body>
 
@@ -35,12 +33,13 @@
     <div id="terminal">
         <div id="output"></div>
         <div style="display:flex; border-top: 1px solid #040; padding-top:10px;">
-            <span style="margin-right:10px;">CMD_SyS ></span>
-            <input type="text" id="cmd-input" style="text-align:left; border:none; margin:0; font-size:1em;">
+            <span style="margin-right:10px; color:#0f0; font-weight:bold;">CMD_SyS ></span>
+            <input type="text" id="cmd-input" autocomplete="off">
         </div>
     </div>
 
     <script>
+        // Système de sécurité
         async function hash(string) {
             const utf8 = new TextEncoder().encode(string.toLowerCase().trim());
             const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
@@ -49,53 +48,53 @@
         }
 
         const TARGET_HASH = "0bb09d80600eec3eb9d7793a6f859bedde2a2d83899b70bd78e961ed674b32f4";
+        const products = {
+            '01': { name: "Exosquelette V1", price: "2.5 BTC" },
+            '02': { name: "Script Intrusion", price: "0.4 BTC" },
+            '03': { name: "Analyse IR", price: "0.1 BTC" },
+            '04': { name: "Proxy Fantôme", price: "0.05 BTC" }
+        };
 
         const passInput = document.getElementById('passphrase');
-        
+        const cmdInput = document.getElementById('cmd-input');
+        const output = document.getElementById('output');
+
+        // Login Logic
         passInput.addEventListener('keydown', async (e) => {
             if (e.key === 'Enter') {
                 const userHash = await hash(passInput.value);
-                
-                // Debug au cas où (F12 pour voir)
-                console.log("User Hash:", userHash);
-
                 if (userHash === TARGET_HASH) {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('terminal').style.display = 'flex';
-                    document.getElementById('output').textContent = "[ ACCESS GRANTED ]\n[ WELCOME SIR ]";
-                    document.getElementById('cmd-input').focus();
+                    output.textContent = "[ ACCESS GRANTED ]\n[ WELCOME SIR ]\nType 'help' to begin.\n";
+                    cmdInput.focus();
                 } else {
                     document.getElementById('error-msg').textContent = "HASH MISMATCH";
                     passInput.value = '';
                 }
             }
         });
-        const cmdInput = document.getElementById('cmd-input');
-        const output = document.getElementById('output');
 
+        // Terminal Logic
         cmdInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                const val = cmdInput.value.toLowerCase().trim();
+                const fullCmd = cmdInput.value.trim();
+                const args = fullCmd.toLowerCase().split(' ');
+                const cmd = args[0];
+                const target = args[1];
+
                 const line = document.createElement('div');
-                line.innerHTML = `<span style="color:#fff">> ${val}</span>`;
+                line.innerHTML = `<span style="color:#fff">> ${fullCmd}</span>`;
                 output.appendChild(line);
                 
                 const response = document.createElement('div');
-                response.style.marginBottom = "10px";
+                response.style.marginBottom = "15px";
 
-                switch(val) {
+                switch(cmd) {
                     case 'help':
-                        response.innerHTML = "Commandes actives : <span style='color:#fff'>services, order, armor, clear, logs</span>";
+                        response.innerHTML = "Commandes actives : <span style='color:#fff'>services, buy [ID], armor, logs, clear</span>";
                         break;
-                    // Liste des produits pour la logique d'achat
-                    const products = {
-                        '01': { name: "Exosquelette V1", price: "2.5 BTC" },
-                        '02': { name: "Script Intrusion", price: "0.4 BTC" },
-                        '03': { name: "Analyse IR", price: "0.1 BTC" },
-                        '04': { name: "Proxy Fantôme", price: "0.05 BTC" }
-                    };
                     
-                    // Dans ton switch(val) :
                     case 'services':
                         response.innerHTML = `
                         <table>
@@ -109,42 +108,34 @@
                                 <tr><td>04</td><td>Proxy Fantôme (Mensuel)</td><td><span class="crypto-tag">₿</span> 0.05</td><td>1.5k €</td></tr>
                             </tbody>
                         </table>
-                        <p style="color:yellow; font-size:0.8em;">Tapez 'buy [ID]' pour commander (ex: buy 01)</p>`;
+                        <p style="color:yellow; font-size:0.8em;">Usage: buy 01</p>`;
                         break;
-                    
-                    case val.startsWith('buy ') ? val : '---':
-                        const id = val.split(' ')[1];
-                        if (products[id]) {
-                            response.innerHTML = `<span style="color:cyan">[!] TRANSACTION INITIALISÉE : ${products[id].name}</span><br>Redirection vers le tunnel de paiement sécurisé...`;
-                            setTimeout(() => {
-                                window.open(`https://tally.so/r/ton-id?item=${id}`, '_blank');
-                            }, 2000);
+
+                    case 'buy':
+                        if (products[target]) {
+                            response.innerHTML = `<span style="color:cyan">[!] TRANSACTION INITIALISÉE : ${products[target].name}</span><br>Redirection tunnel sécurisé...`;
+                            setTimeout(() => { window.open(`https://tally.so/r/YOUR_ID?item=${target}`, '_blank'); }, 1500);
                         } else {
-                            response.innerHTML = "<span style='color:red'>ID PRODUIT INVALIDE.</span>";
+                            response.innerHTML = "<span style='color:red'>ID INVALIDE. Tapez 'services'.</span>";
                         }
                         break;
-                    case 'order':
-                        response.innerHTML = "<span style='color:yellow'>[!] INITIALIZING SECURE TUNNEL...</span>";
-                        // Redirection réelle vers un formulaire après 2 secondes
-                        setTimeout(() => { 
-                            window.open('https://tally.so/r/YOUR_ID', '_blank'); 
-                        }, 2000);
-                        break;
+
                     case 'armor':
                         response.innerHTML = `
 [ ARMOR PROJECT - PROTO-01 ]
-- Chassis : Titane Grade 5 (Source identifiée)
+- Chassis : Titane Grade 5
 - Articulations : Servomoteurs High-Torque 40kg
-- Énergie : Pack Li-Po 24V (En attente d'optimisation)
 - Status : Phase de conception 3D.`;
                         break;
+
                     case 'logs':
-                        // Affiche la date et l'heure réelle de connexion
-                        response.innerText = "LAST LOGIN: " + new Date().toLocaleString() + "\nIP: [ ENCRYPTED ]\nLOCATION: [ HIDDEN ]";
+                        response.innerText = "LAST LOGIN: " + new Date().toLocaleString() + "\nIP: [ ENCRYPTED ]\nSTATUS: ACTIVE";
                         break;
+
                     case 'clear':
                         output.innerHTML = "[ SYSTEM RELOADED ]";
                         break;
+
                     default:
                         response.style.color = "red";
                         response.innerText = "Unknown command.";
