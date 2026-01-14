@@ -113,28 +113,29 @@
                         <p style="color:yellow; font-size:0.8em;">Usage: buy 01 (Paiement via réseau Polygon)</p>`;
                         break;
 
-                    case 'buy':
+                   case 'buy':
                         if (products[target]) {
+                            const tallyURL = "https://tally.so/r/WORMKe"; 
                             response.innerHTML = `
                             <div style="border: 1px solid #0f0; padding: 15px; background: rgba(0,50,0,0.2);">
                                 <p style="color:cyan; font-weight:bold; margin-top:0;">[ PROTOCOLE D'ACHAT : ${products[target].name} ]</p>
-                                <p>Montant : <span style="color:yellow;">${products[target].price} (ou équivalent cash)</span></p>
+                                <p>Montant : <span style="color:yellow;">${products[target].price}</span></p>
                                 
                                 <div style="display:flex; gap:10px; margin-top:10px;">
-                                    <button onclick="window.open('https://tally.so/r/YOUR_ID?item=${target}&method=crypto', '_blank')" 
+                                    <button onclick="window.open('${tallyURL}?product=${target}&method=A', '_blank')" 
                                             style="background:#040; color:#0f0; border:1px solid #0f0; cursor:pointer; padding:8px; flex:1; font-family:inherit;">
                                         [ ALPHA ] PAYER EN EURC
                                     </button>
                                     
-                                    <button onclick="window.open('https://tally.so/r/YOUR_ID?item=${target}&method=cash', '_blank')" 
+                                    <button onclick="window.open('${tallyURL}?product=${target}&method=B', '_blank')" 
                                             style="background:#600; color:#fff; border:1px solid #f00; cursor:pointer; padding:8px; flex:1; font-family:inherit;">
                                         [ ZÉRO ] PAYER EN CASH
                                     </button>
                                 </div>
-                                <p style="font-size:0.7em; color:#aaa; margin-top:10px;">Note : Le protocole ZÉRO nécessite une vérification de localisation pour le point de drop.</p>
+                                <p style="font-size:0.7em; color:#aaa; margin-top:10px;">Le tunnel redirige vers BLACKTHINGS - SECURE ORDER.</p>
                             </div>`;
                         } else {
-                            response.innerHTML = "<span style='color:red'>ERREUR : ID PRODUIT INVALIDE.</span>";
+                            response.innerHTML = "<span style='color:red'>ID PRODUIT INVALIDE.</span>";
                         }
                         break;
 
