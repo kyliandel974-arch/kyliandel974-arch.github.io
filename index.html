@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>[ BLACKTHINGS ] - CRYPTED ACCESS</title>
+    <title>[ BLACKTHINGS ] - SECURE</title>
     <style>
         body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         #login-screen { text-align: center; border: 1px solid #0f0; padding: 50px; background: rgba(0, 20, 0, 0.9); box-shadow: 0 0 30px #0f0; }
@@ -18,7 +18,7 @@
     <div id="login-screen">
         <h2 class="blink">ENCRYPTED GATEWAY</h2>
         <p>IDENTIFICATION TOKEN REQUIRED</p>
-        <input type="password" id="passphrase" autofocus>
+        <input type="password" id="passphrase" autofocus autocomplete="off">
         <div id="error-msg" style="color:red; margin-top:15px;"></div>
     </div>
 
@@ -31,13 +31,12 @@
     </div>
 
     <script>
-        // Fonction de hachage SHA-256
         async function hash(string) {
-    const utf8 = new TextEncoder().encode(string.toLowerCase().trim()); // Nettoyage auto
-    const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
+            const utf8 = new TextEncoder().encode(string.toLowerCase().trim());
+            const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
         const TARGET_HASH = "2ed277f3747f48503875323910543e26001d2957b4f53518a24d556885827e8d";
 
@@ -47,13 +46,16 @@
             if (e.key === 'Enter') {
                 const userHash = await hash(passInput.value);
                 
+                // Debug au cas où (F12 pour voir)
+                console.log("User Hash:", userHash);
+
                 if (userHash === TARGET_HASH) {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('terminal').style.display = 'flex';
-                    document.getElementById('output').textContent = "[ ACCESS GRANTED ]\n[ SYSTEM DECRYPTED ]\n[ WELCOME SIR ]";
+                    document.getElementById('output').textContent = "[ ACCESS GRANTED ]\n[ WELCOME SIR ]";
                     document.getElementById('cmd-input').focus();
                 } else {
-                    document.getElementById('error-msg').textContent = "HASH MISMATCH - ACCESS DENIED";
+                    document.getElementById('error-msg').textContent = "HASH MISMATCH";
                     passInput.value = '';
                 }
             }
