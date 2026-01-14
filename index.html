@@ -12,10 +12,15 @@
         .blink { animation: blinker 1s linear infinite; }
         @keyframes blinker { 50% { opacity: 0; } }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; border: 1px solid #040; }
-    th { background: #020; color: #fff; text-align: left; padding: 10px; border-bottom: 2px solid #0f0; }
-    td { padding: 8px; border-bottom: 1px solid #020; color: #0f0; }
-    tr:hover { background: rgba(0, 255, 0, 0.1); }
-    .crypto-tag { color: #f2a900; font-weight: bold; font-size: 0.8em; }
+        th { background: #020; color: #fff; text-align: left; padding: 10px; border-bottom: 2px solid #0f0; }
+        td { padding: 8px; border-bottom: 1px solid #020; color: #0f0; }
+        tr:hover { background: rgba(0, 255, 0, 0.1); }
+        .crypto-tag { color: #f2a900; font-weight: bold; font-size: 0.8em; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; border: 1px solid #040; background: rgba(0,20,0,0.5); }
+        th { background: #040; color: #fff; text-align: left; padding: 12px; border-bottom: 2px solid #0f0; font-size: 0.9em; }
+        td { padding: 10px; border-bottom: 1px solid #020; color: #0f0; font-size: 0.85em; }
+        tr:hover { background: rgba(0, 255, 0, 0.1); }
+        .crypto-tag { color: #f2a900; font-weight: bold; }
 </style>
 </head>
 <body>
@@ -82,46 +87,41 @@
                     case 'help':
                         response.innerHTML = "Commandes actives : <span style='color:#fff'>services, order, armor, clear, logs</span>";
                         break;
+                    // Liste des produits pour la logique d'achat
+                    const products = {
+                        '01': { name: "Exosquelette V1", price: "2.5 BTC" },
+                        '02': { name: "Script Intrusion", price: "0.4 BTC" },
+                        '03': { name: "Analyse IR", price: "0.1 BTC" },
+                        '04': { name: "Proxy Fantôme", price: "0.05 BTC" }
+                    };
+                    
+                    // Dans ton switch(val) :
                     case 'services':
                         response.innerHTML = `
                         <table>
                             <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>DÉSIGNATION</th>
-                                    <th>PRIX (BTC)</th>
-                                    <th>PRIX (CASH)</th>
-                                </tr>
+                                <tr><th>ID</th><th>DESIGNATION</th><th>BTC</th><th>CASH</th></tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>#01</td>
-                                    <td>Module Exosquelette V1</td>
-                                    <td><span class="crypto-tag">₿</span> 2.5</td>
-                                    <td>75,000 €</td>
-                                </tr>
-                                <tr>
-                                    <td>#02</td>
-                                    <td>Script Intrusion Brute</td>
-                                    <td><span class="crypto-tag">₿</span> 0.4</td>
-                                    <td>12,000 €</td>
-                                </tr>
-                                <tr>
-                                    <td>#03</td>
-                                    <td>Analyse Infra-Rouge</td>
-                                    <td><span class="crypto-tag">₿</span> 0.1</td>
-                                    <td>3,000 €</td>
-                                </tr>
-                                <tr>
-                                    <td>#04</td>
-                                    <td>Proxy Fantôme (Mensuel)</td>
-                                    <td><span class="crypto-tag">₿</span> 0.05</td>
-                                    <td>1,500 €</td>
-                                </tr>
+                                <tr><td>01</td><td>Module Exosquelette V1</td><td><span class="crypto-tag">₿</span> 2.5</td><td>75k €</td></tr>
+                                <tr><td>02</td><td>Script Intrusion Brute</td><td><span class="crypto-tag">₿</span> 0.4</td><td>12k €</td></tr>
+                                <tr><td>03</td><td>Analyse Infra-Rouge</td><td><span class="crypto-tag">₿</span> 0.1</td><td>3k €</td></tr>
+                                <tr><td>04</td><td>Proxy Fantôme (Mensuel)</td><td><span class="crypto-tag">₿</span> 0.05</td><td>1.5k €</td></tr>
                             </tbody>
                         </table>
-                        <p style="font-size: 0.8em; color: yellow;">[!] INFO : RÈGLEMENT VIA CRYPTO OU VALISE UNIQUEMENT.</p>
-                        `;
+                        <p style="color:yellow; font-size:0.8em;">Tapez 'buy [ID]' pour commander (ex: buy 01)</p>`;
+                        break;
+                    
+                    case val.startsWith('buy ') ? val : '---':
+                        const id = val.split(' ')[1];
+                        if (products[id]) {
+                            response.innerHTML = `<span style="color:cyan">[!] TRANSACTION INITIALISÉE : ${products[id].name}</span><br>Redirection vers le tunnel de paiement sécurisé...`;
+                            setTimeout(() => {
+                                window.open(`https://tally.so/r/ton-id?item=${id}`, '_blank');
+                            }, 2000);
+                        } else {
+                            response.innerHTML = "<span style='color:red'>ID PRODUIT INVALIDE.</span>";
+                        }
                         break;
                     case 'order':
                         response.innerHTML = "<span style='color:yellow'>[!] INITIALIZING SECURE TUNNEL...</span>";
