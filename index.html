@@ -18,7 +18,7 @@
         th { background: #040; color: #fff; text-align: left; padding: 12px; border-bottom: 2px solid #0f0; }
         td { padding: 10px; border-bottom: 1px solid #020; color: #0f0; }
         tr:hover { background: rgba(0, 255, 0, 0.1); }
-        .crypto-tag { color: #f2a900; font-weight: bold; }
+        .euro-crypto { color: #2752e7; font-weight: bold; } /* Couleur bleue EURC */
     </style>
 </head>
 <body>
@@ -48,11 +48,13 @@
         }
 
         const TARGET_HASH = "0bb09d80600eec3eb9d7793a6f859bedde2a2d83899b70bd78e961ed674b32f4";
+        
+        // Base de données produits EURC
         const products = {
-            '01': { name: "Exosquelette V1", price: "2.5 BTC" },
-            '02': { name: "Script Intrusion", price: "0.4 BTC" },
-            '03': { name: "Analyse IR", price: "0.1 BTC" },
-            '04': { name: "Proxy Fantôme", price: "0.05 BTC" }
+            '01': { name: "Exosquelette V1", price: "75.000 EURC" },
+            '02': { name: "Script Intrusion", price: "12.000 EURC" },
+            '03': { name: "Analyse IR", price: "3.000 EURC" },
+            '04': { name: "Proxy Fantôme", price: "1.500 EURC" }
         };
 
         const passInput = document.getElementById('passphrase');
@@ -92,41 +94,41 @@
 
                 switch(cmd) {
                     case 'help':
-                        response.innerHTML = "Commandes actives : <span style='color:#fff'>services, buy [ID], armor, logs, clear</span>";
+                        response.innerHTML = "Commandes : <span style='color:#fff'>services, buy [ID], armor, logs, clear</span>";
                         break;
                     
                     case 'services':
                         response.innerHTML = `
                         <table>
                             <thead>
-                                <tr><th>ID</th><th>DESIGNATION</th><th>EURC</th><th>CASH</th></tr>
+                                <tr><th>ID</th><th>DESIGNATION</th><th>PRIX (EURC)</th><th>STABILITÉ</th></tr>
                             </thead>
                             <tbody>
-                                <tr><td>01</td><td>Module Exosquelette V1</td><td><span class="crypto-tag">₿</span> 2.5</td><td>75k €</td></tr>
-                                <tr><td>02</td><td>Script Intrusion Brute</td><td><span class="crypto-tag">₿</span> 0.4</td><td>12k €</td></tr>
-                                <tr><td>03</td><td>Analyse Infra-Rouge</td><td><span class="crypto-tag">₿</span> 0.1</td><td>3k €</td></tr>
-                                <tr><td>04</td><td>Proxy Fantôme (Mensuel)</td><td><span class="crypto-tag">₿</span> 0.05</td><td>1.5k €</td></tr>
+                                <tr><td>01</td><td>Module Exosquelette V1</td><td><span class="euro-crypto">€</span> 75.000</td><td>1:1 EUR</td></tr>
+                                <tr><td>02</td><td>Script Intrusion Brute</td><td><span class="euro-crypto">€</span> 12.000</td><td>1:1 EUR</td></tr>
+                                <tr><td>03</td><td>Analyse Infra-Rouge</td><td><span class="euro-crypto">€</span> 3.000</td><td>1:1 EUR</td></tr>
+                                <tr><td>04</td><td>Proxy Fantôme (Mensuel)</td><td><span class="euro-crypto">€</span> 1.500</td><td>1:1 EUR</td></tr>
                             </tbody>
                         </table>
-                        <p style="color:yellow; font-size:0.8em;">Usage: buy 01</p>`;
+                        <p style="color:yellow; font-size:0.8em;">Usage: buy 01 (Paiement via réseau Polygon)</p>`;
                         break;
 
-                   case 'buy':
+                    case 'buy':
                         if (products[target]) {
                             response.innerHTML = `
-                            <div style="border: 1px solid #0f0; padding: 10px;">
-                                <p style="color:cyan;">[!] COMMANDE : ${products[target].name}</p>
-                                <p>1. Ouvrez votre wallet (Exodus ou autre)</p>
-                                <p>2. Envoyez <span style="color:yellow;">${products[target].price}</span></p>
-                                <p>3. Réseau : <span style="color:yellow;">POLYGON (MATIC)</span></p>
-                                <p>4. Cliquez ci-dessous pour confirmer l'envoi :</p>
+                            <div style="border: 1px solid #0f0; padding: 15px; background: rgba(0,50,0,0.2);">
+                                <p style="color:cyan; font-weight:bold; margin-top:0;">[ PROTOCOLE D'ACHAT INITIALISÉ ]</p>
+                                <p>Objet : ${products[target].name}</p>
+                                <p>Montant : <span style="color:yellow;">${products[target].price}</span></p>
+                                <p>Réseau requis : <span style="color:yellow;">POLYGON (MATIC)</span> via Exodus</p>
+                                <p style="font-size:0.8em; color:#888;">Note : Les fonds envoyés sur un autre réseau seront perdus.</p>
                                 <button onclick="window.open('https://tally.so/r/YOUR_ID?item=${target}', '_blank')" 
-                                        style="background:#040; color:#0f0; border:1px solid #0f0; cursor:pointer; padding:5px;">
-                                    CONFIRMER PAIEMENT
+                                        style="background:#040; color:#0f0; border:1px solid #0f0; cursor:pointer; padding:8px; width:100%; font-family:inherit;">
+                                    OBTENIR L'ADRESSE ET CONFIRMER
                                 </button>
                             </div>`;
                         } else {
-                            response.innerHTML = "<span style='color:red'>ID INVALIDE.</span>";
+                            response.innerHTML = "<span style='color:red'>ERREUR : ID PRODUIT INVALIDE.</span>";
                         }
                         break;
 
