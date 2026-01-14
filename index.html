@@ -1,7 +1,62 @@
 <!DOCTYPE html>
-<html>
-<body style="background:black; color:#00ff41; font-family:monospace;">
-    <h1>[ BLACKTHINGS ]</h1>
-    <p>SYSTEM_INITIALIZED...</p>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>[ BLACKTHINGS ] - TERMINAL</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; flex-direction: column; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        #output { flex-grow: 1; overflow-y: auto; white-space: pre-wrap; margin-bottom: 20px; text-shadow: 0 0 5px #0f0; }
+        #input-line { display: flex; border-top: 1px solid #040; padding-top: 10px; }
+        #prompt { color: #0f0; margin-right: 10px; }
+        input { background: transparent; border: none; color: #0f0; font-family: inherit; font-size: inherit; outline: none; flex-grow: 1; }
+        .cmd-out { color: #888; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div id="output">[ SYSTEM READY ]
+Type 'help' to see available commands.</div>
+    <div id="input-line">
+        <span id="prompt">BT-SYS_></span>
+        <input type="text" id="cmd-input" autofocus>
+    </div>
+
+    <script>
+        const input = document.getElementById('cmd-input');
+        const output = document.getElementById('output');
+
+        const commands = {
+            'help': "Available: status, armor-log, recruit, clear",
+            'status': "ONLINE - All systems green. Initializing Blackthings network.",
+            'armor-log': "PROTO-01: Energy core analysis required. Structure: Titanium/Gold alloy (Planned).",
+            'recruit': "Searching for candidates... Executor-class profile needed.",
+            'clear': ""
+        };
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const cmd = input.value.toLowerCase().trim();
+                const newLine = document.createElement('div');
+                newLine.innerHTML = `<span style="color:#fff">> ${cmd}</span>`;
+                output.appendChild(newLine);
+
+                if (cmd === 'clear') {
+                    output.innerHTML = "[ SYSTEM CLEARED ]";
+                } else if (commands[cmd]) {
+                    const response = document.createElement('div');
+                    response.className = 'cmd-out';
+                    response.textContent = commands[cmd];
+                    output.appendChild(response);
+                } else {
+                    const error = document.createElement('div');
+                    error.style.color = 'red';
+                    error.textContent = "Unknown command.";
+                    output.appendChild(error);
+                }
+                
+                input.value = '';
+                output.scrollTop = output.scrollHeight;
+            }
+        });
+    </script>
 </body>
 </html>
