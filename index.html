@@ -117,15 +117,21 @@
                         if (products[target]) {
                             response.innerHTML = `
                             <div style="border: 1px solid #0f0; padding: 15px; background: rgba(0,50,0,0.2);">
-                                <p style="color:cyan; font-weight:bold; margin-top:0;">[ PROTOCOLE D'ACHAT INITIALISÉ ]</p>
-                                <p>Objet : ${products[target].name}</p>
-                                <p>Montant : <span style="color:yellow;">${products[target].price}</span></p>
-                                <p>Réseau requis : <span style="color:yellow;">POLYGON (MATIC)</span> via Exodus</p>
-                                <p style="font-size:0.8em; color:#888;">Note : Les fonds envoyés sur un autre réseau seront perdus.</p>
-                                <button onclick="window.open('https://tally.so/r/YOUR_ID?item=${target}', '_blank')" 
-                                        style="background:#040; color:#0f0; border:1px solid #0f0; cursor:pointer; padding:8px; width:100%; font-family:inherit;">
-                                    OBTENIR L'ADRESSE ET CONFIRMER
-                                </button>
+                                <p style="color:cyan; font-weight:bold; margin-top:0;">[ PROTOCOLE D'ACHAT : ${products[target].name} ]</p>
+                                <p>Montant : <span style="color:yellow;">${products[target].price} (ou équivalent cash)</span></p>
+                                
+                                <div style="display:flex; gap:10px; margin-top:10px;">
+                                    <button onclick="window.open('https://tally.so/r/YOUR_ID?item=${target}&method=crypto', '_blank')" 
+                                            style="background:#040; color:#0f0; border:1px solid #0f0; cursor:pointer; padding:8px; flex:1; font-family:inherit;">
+                                        [ ALPHA ] PAYER EN EURC
+                                    </button>
+                                    
+                                    <button onclick="window.open('https://tally.so/r/YOUR_ID?item=${target}&method=cash', '_blank')" 
+                                            style="background:#600; color:#fff; border:1px solid #f00; cursor:pointer; padding:8px; flex:1; font-family:inherit;">
+                                        [ ZÉRO ] PAYER EN CASH
+                                    </button>
+                                </div>
+                                <p style="font-size:0.7em; color:#aaa; margin-top:10px;">Note : Le protocole ZÉRO nécessite une vérification de localisation pour le point de drop.</p>
                             </div>`;
                         } else {
                             response.innerHTML = "<span style='color:red'>ERREUR : ID PRODUIT INVALIDE.</span>";
