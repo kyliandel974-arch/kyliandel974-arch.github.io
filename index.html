@@ -63,19 +63,6 @@
         const cmdInput = document.getElementById('cmd-input');
         const output = document.getElementById('output');
 
-        const catalog = `
-[ CATALOGUE SERVICES & OBJETS ]
---------------------------------------------------
-ID   | DESIGNATION            | PRIX (BTC/CASH)
---------------------------------------------------
-#01  | Module Exosquelette V1 | 2.5 BTC / 75k€
-#02  | Script Intrusion brute | 0.4 BTC / 12k€
-#03  | Analyse Infra-Rouge    | 0.1 BTC / 3k€
-#04  | Serveur Proxy Fantôme  | 0.05 BTC/mois
---------------------------------------------------
-NOTE : AUCUN VIREMENT. CRYPTO OU LIQUIDE UNIQUEMENT.
-`;
-
         cmdInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 const val = cmdInput.value.toLowerCase().trim();
@@ -88,20 +75,29 @@ NOTE : AUCUN VIREMENT. CRYPTO OU LIQUIDE UNIQUEMENT.
 
                 switch(val) {
                     case 'help':
-                        response.innerHTML = "Commandes : <span style='color:#fff'>services, order, network, status, clear</span>";
+                        response.innerHTML = "Commandes actives : <span style='color:#fff'>services, order, armor, clear, logs</span>";
                         break;
                     case 'services':
                         response.innerText = catalog;
                         break;
                     case 'order':
-                        response.innerHTML = "<span style='color:yellow'>[!] REDIRECTING TO SECURE FORM...</span><br>Veuillez remplir vos coordonnées PGP sur la page de commande externe.";
-                        // Ici on pourrait mettre un lien réel : window.open('https://ton-formulaire.com');
+                        response.innerHTML = "<span style='color:yellow'>[!] INITIALIZING SECURE TUNNEL...</span>";
+                        // Redirection réelle vers un formulaire après 2 secondes
+                        setTimeout(() => { 
+                            window.open('https://tally.so/r/YOUR_ID', '_blank'); 
+                        }, 2000);
                         break;
-                    case 'network':
-                        response.innerHTML = "SCANNING...<br>[OK] Proxy Node 1<br>[OK] Proxy Node 2<br><span style='color:red'>[!] Warning: Latency on Satellite-Link</span>";
+                    case 'armor':
+                        response.innerHTML = `
+[ ARMOR PROJECT - PROTO-01 ]
+- Chassis : Titane Grade 5 (Source identifiée)
+- Articulations : Servomoteurs High-Torque 40kg
+- Énergie : Pack Li-Po 24V (En attente d'optimisation)
+- Status : Phase de conception 3D.`;
                         break;
-                    case 'status':
-                        response.innerText = "SYSTEM: STABLE\nPOWER: 84%\nARMOR INTEGRITY: 100%";
+                    case 'logs':
+                        // Affiche la date et l'heure réelle de connexion
+                        response.innerText = "LAST LOGIN: " + new Date().toLocaleString() + "\nIP: [ ENCRYPTED ]\nLOCATION: [ HIDDEN ]";
                         break;
                     case 'clear':
                         output.innerHTML = "[ SYSTEM RELOADED ]";
